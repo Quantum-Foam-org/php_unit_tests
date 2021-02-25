@@ -11,19 +11,26 @@ require ($cli_autoload_file);
 require ('./lib/autoload.php');
 
 use lib\classes\PHPUnitTest;
-use lib\classes\validate as localCli;
+use lib\classes\validate;
+use common\logging\Logger;
 
 \common\Config::obj(__DIR__ . '/config/config.ini');
 
-if ($argc >= 1) {
-    $f = new localCli\TestOpts();
-    try {
-        $f->exchangeArray(array_slice($argv, 1));
-    } catch (\UnexpectedValueException $e) {
-        exit(\common\logging\Logger::obj()->writeException($e));
+$opt = new validate\TestOpts();
+try {
+    $opt->exchangeArray(array_slice($argv, 1));
+
+    if (!isset($opt->path)) {
+        exit(Logger::obj()->write('--path must be set to the location of the test files', -1, true, 1));
     }
+
+    if (!isset($opt->namespace)) {
+        exit(Logger::obj()->write('--namespace must be set to the namespace of the test files', -1, true, 2));
+    }
+} catch (\UnexpectedValueException $e) {
+    exit(\common\logging\Logger::obj()->writeException($e));
 }
 
-$phpUnitTest = new PHPUnitTest($f);
+$phpUnitTest = new PHPUnitTest($opt);
 
 $phpUnitTest->run();

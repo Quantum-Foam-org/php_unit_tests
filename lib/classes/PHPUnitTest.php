@@ -8,21 +8,21 @@ use common\logging\Logger as Logger;
 class PHPUnitTest {
     private $testFiles = [];
     
-    public function __construct(TestOpts $opts) 
+    public function __construct(validate\TestOpts $opts) 
     {
         $testFilepath = sprintf('%s/%s', $opts->path,'*Test.php');
         
         if (is_dir($opts->path) && !empty(($testFiles = glob($opts->path)))){
-            $this->testsFiles = $testFilepath;
+            $this->testFiles = $testFilepath;
         } else {
-            $log = sprintf('Test Files not Found make sure that the directory exists and is readable.  DIR: %s', $path);
+            $log = sprintf('Test Files not Found make sure that the directory exists and is readable.  DIR: %s', $opts->path);
             Logger::obj()->write($log);
         }
     }
     
     public function run(): void 
     {
-        foreach ($this->testsFiles as $file) {
+        foreach ($this->testFiles as $file) {
             $className = basename($file, '.php');
             
             $phpUnitTestObj = new $className();

@@ -4,7 +4,7 @@ namespace lib\classes\validate;
 
 use cli\classes as cli;
 
-class TestOpt extends cli\Flag {
+class TestOpts extends cli\Flag {
 	protected $path;
         protected $namespace;
 	
@@ -17,7 +17,7 @@ class TestOpt extends cli\Flag {
                             FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH
                         ]
                     ],
-                'namepsace' =>
+                'namespace' =>
                     [
                         FILTER_SANITIZE_STRING,
                         [
@@ -32,7 +32,7 @@ class TestOpt extends cli\Flag {
             parent::__set($name, $value);
             
             if ($name === 'path') {
-                $value = realpath($name);
+                $this->path = realpath($this->path);
             }
             
             return $value;
