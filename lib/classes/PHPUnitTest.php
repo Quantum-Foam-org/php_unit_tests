@@ -7,23 +7,30 @@ use common\logging\Logger as Logger;
 
 class PHPUnitTest {
     private $testFiles = [];
+    private $opts;
     
     public function __construct(validate\TestOpts $opts) 
     {
         $testFilepath = sprintf('%s/%s', $opts->path,'*Test.php');
         
-        if (is_dir($opts->path) && !empty(($testFiles = glob($opts->path)))){
-            $this->testFiles = $testFilepath;
+        if (is_dir($opts->path) && !empty(($testFiles = glob($testFilepath)))){
+            $this->testFiles = $testFiles;
         } else {
             $log = sprintf('Test Files not Found make sure that the directory exists and is readable.  DIR: %s', $opts->path);
             Logger::obj()->write($log);
         }
+        
+        $this->opts = $opts;
     }
     
     public function run(): void 
     {
         foreach ($this->testFiles as $file) {
-            $className = basename($file, '.php');
+            $className = sprintf(
+                    '%s\%s', 
+                    $this->opts->namespace, 
+                    basename($file, '.php')
+                    );
             
             $phpUnitTestObj = new $className();
             
@@ -38,12 +45,13 @@ class PHPUnitTest {
             }
             
             foreach ($methods as  $method) {
-                if ($phpUnitTestObj->$method() === true) {
-                    $log = sprintf('%s::%s succeeded', $className, $method);
-                    Logger::obj()->write($log);
+                $methodName = $method->getName();
+                if ($phpUnitTestObj->{$methodName}() === true) {
+                    $log = sprintf('%s::%s succeeded', $className, $methodName);
+                    Logger::obj()->write($log,0, true);
                 } else {
-                    $log = sprintf('%s::%s failed', $className, $method);
-                    Logger::obj()->write($log);
+                    $log = sprintf('%s::%s failed', $className, $methodName);
+                    Logger::obj()->write($log, 0,true);
                 }
             }  
         }
