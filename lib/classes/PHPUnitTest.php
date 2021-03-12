@@ -23,7 +23,7 @@ class PHPUnitTest {
                 Logger::obj()->write($log);
             }
             
-            $testFilepath = sprintf('%s/%s', $opts->path,'*Test.php');
+            $testFilepath = sprintf('%s/classes/%s', $opts->path,'*Test.php');
         
             if (!empty(($testFiles = glob($testFilepath)))){
                 $this->testFiles = $testFiles;
@@ -38,6 +38,8 @@ class PHPUnitTest {
     
     public function run() : bool 
     {
+        $allPassing = null;
+            
         foreach ($this->testFiles as $file) {
             $className = sprintf(
                     '%s\%s', 
@@ -46,35 +48,43 @@ class PHPUnitTest {
                     );
             
             $phpUnitTestObj = new $className();
-            
-            $ref = new \ReflectionClass($className);
-            
-            $methods = $ref->getMethods();
-            if (!empty($methods)) {
-                $methods = \array_filter($methods, 
-                        function($method) { 
-                            return strpos($method, 'Test'); 
-                        } );
-            }
-            
-            $allPassing = true;
-                    
-            foreach ($methods as  $method) {
-                $methodName = $method->getName();
-                if ($phpUnitTestObj->{$methodName}() === true) {
-                    $log = sprintf('%s::%s succeeded', $className, $methodName);
-                    Logger::obj()->write($log,0, true);
+                
+            if ($phpUnitTestObj instanceOf $className) {
+                $ref = new \ReflectionClass($className);
+
+                $methods = $ref->getMethods();
+                if (!empty($methods)) {
+                    $methods = \array_filter($methods, 
+                            function($method) { 
+                                return strpos($method, 'Test'); 
+                            } );
                 } else {
-                    $log = sprintf('%s::%s failed', $className, $methodName);
-                    Logger::obj()->write($log, 0,true);
-                    
-                    if ($allPassing !== false) {
-                        $allPassing = false;
+                    $log = sprintf('%s no test methods found', $className);
+                        Logger::obj()->write($log,0, true);
+                }
+
+                foreach ($methods as  $method) {
+                    $methodName = $method->getName();
+                    if ($phpUnitTestObj->{$methodName}() === true) {
+                        $log = sprintf('%s::%s succeeded', $className, $methodName);
+                        Logger::obj()->write($log,0, true);
+                        
+                        if (!isset($allPassing)) {
+                            $allPassing = true;
+                        }
+                    } else {
+                        $log = sprintf('%s::%s failed', $className, $methodName);
+                        Logger::obj()->write($log, 0,true);
+                        unset($allPassing);
                     }
                 }
+            } else {
+                $log = sprintf('Test Class could not be created, %s', $className);
+                Logger::obj()->write($log, -1, true);
+                unset($allPassing);
             }
         }
         
-        return $allPassing;
+        return $allPassing ?? false;
     }
 }
