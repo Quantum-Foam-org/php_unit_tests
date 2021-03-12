@@ -33,4 +33,10 @@ try {
 
 $phpUnitTest = new PHPUnitTest($opt);
 
-$phpUnitTest->run();
+$allPassing = $phpUnitTest->run();
+
+if ($allPassing) {
+    exit(Logger::obj()->write('Test complete.  Success! All tests are passing', 0, true, 0));
+} else {
+    exit(Logger::obj()->write('Tesst complete. Failed !tests are NOT passing', -1, true, 3));
+}

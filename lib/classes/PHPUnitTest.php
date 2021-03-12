@@ -10,11 +10,24 @@ class PHPUnitTest {
     private $opts;
     
     public function __construct(validate\TestOpts $opts) 
-    {
-        $testFilepath = sprintf('%s/%s', $opts->path,'*Test.php');
+    {   
+        if (is_dir($opts->path)) {
+            $bootstrapFile = sprintf('%s/Bootstrap.php', $opts->path);
+
+            if (file_exists($bootstrapFile) && is_readable($bootstrapFile)) {
+                require_once($bootstrapFile);
+                $log = sprintf('bootstrap file has been requried, %s', $bootstrapFile);
+                Logger::obj()->write($log);
+            } else {
+                $log = sprintf('bootstrap is not found or cannot be read, %s', $bootstrapFile);
+                Logger::obj()->write($log);
+            }
+            
+            $testFilepath = sprintf('%s/%s', $opts->path,'*Test.php');
         
-        if (is_dir($opts->path) && !empty(($testFiles = glob($testFilepath)))){
-            $this->testFiles = $testFiles;
+            if (!empty(($testFiles = glob($testFilepath)))){
+                $this->testFiles = $testFiles;
+            }
         } else {
             $log = sprintf('Test Files not Found make sure that the directory exists and is readable.  DIR: %s', $opts->path);
             Logger::obj()->write($log);
@@ -23,7 +36,7 @@ class PHPUnitTest {
         $this->opts = $opts;
     }
     
-    public function run(): void 
+    public function run() : bool 
     {
         foreach ($this->testFiles as $file) {
             $className = sprintf(
@@ -44,6 +57,8 @@ class PHPUnitTest {
                         } );
             }
             
+            $allPassing = true;
+                    
             foreach ($methods as  $method) {
                 $methodName = $method->getName();
                 if ($phpUnitTestObj->{$methodName}() === true) {
@@ -52,8 +67,14 @@ class PHPUnitTest {
                 } else {
                     $log = sprintf('%s::%s failed', $className, $methodName);
                     Logger::obj()->write($log, 0,true);
+                    
+                    if ($allPassing !== false) {
+                        $allPassing = false;
+                    }
                 }
-            }  
+            }
         }
+        
+        return $allPassing;
     }
 }
