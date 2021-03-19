@@ -36,7 +36,17 @@ $phpUnitTest = new PHPUnitTest($opt);
 $allPassing = $phpUnitTest->run();
 
 if ($allPassing) {
-    exit(Logger::obj()->write('Test complete.  Success! All tests are passing', 0, true, 0));
+    $log = sprintf(
+            'Test complete.  Success! All tests are passing.  Total Tests Passing: %d, Total Tests Failing: %d', 
+            $phpUnitTest->testCounts['passing'],
+            $phpUnitTest->testCounts['failing'],
+            );
+    exit(Logger::obj()->write($log, 0, true, 0));
 } else {
-    exit(Logger::obj()->write('Tesst complete. Failed !tests are NOT passing', -1, true, 3));
+    $log = sprintf(
+            'Tesst complete. Failed! Tests are NOT passing. Total Tests Passing: %d, Total Tests Failing: %d',
+            $phpUnitTest->testCounts['passing'],
+            $phpUnitTest->testCounts['failing']
+            );
+    exit(Logger::obj()->write($log, -1, true, 3));
 }

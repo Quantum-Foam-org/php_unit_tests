@@ -8,6 +8,7 @@ use common\logging\Logger as Logger;
 class PHPUnitTest {
     private $testFiles = [];
     private $opts;
+    private $testCounts = ['passing' => 0, 'failing' => 0];
     
     public function __construct(validate\TestOpts $opts) 
     {   
@@ -48,7 +49,7 @@ class PHPUnitTest {
                     );
             
             $phpUnitTestObj = new $className();
-                
+            
             if ($phpUnitTestObj instanceOf $className) {
                 $ref = new \ReflectionClass($className);
 
@@ -66,25 +67,37 @@ class PHPUnitTest {
                 foreach ($methods as  $method) {
                     $methodName = $method->getName();
                     if ($phpUnitTestObj->{$methodName}() === true) {
-                        $log = sprintf('%s::%s succeeded', $className, $methodName);
+                        $log = sprintf('%d.) %s::%s succeeded', ++$this->testCounts['passing'], $className, $methodName);
                         Logger::obj()->write($log,0, true);
                         
                         if (!isset($allPassing)) {
                             $allPassing = true;
                         }
                     } else {
-                        $log = sprintf('%s::%s failed', $className, $methodName);
+                        $log = sprintf('%d.) %s::%s failed', ++$this->testCounts['passing'], $className, $methodName);
                         Logger::obj()->write($log, 0,true);
-                        unset($allPassing);
+                        
+                        if ($allPassing === true) {
+                            $allPassing = false;
+                        }
                     }
                 }
             } else {
+                $this->testCounts['failing']++;
+                
                 $log = sprintf('Test Class could not be created, %s', $className);
                 Logger::obj()->write($log, -1, true);
-                unset($allPassing);
+                
+                if ($allPassing === true) {
+                    $allPassing = false;
+                }
             }
         }
         
         return $allPassing ?? false;
+    }
+    
+    public function __get($name) {
+        return ($name === 'testCounts' ? $this->testCounts : false);
     }
 }
