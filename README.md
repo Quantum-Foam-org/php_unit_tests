@@ -17,4 +17,4 @@ To see an example test try checking out HTTP_Testing_Utilities and then run the 
 
 6.) cd php_unit_tests
 
-7.) php runTests.php --path=../HTTP_Testing_Utilities/tests --namespace=HTTPTestingUtilities\\tests
+7.) php runTests.php --path=../HTTP_Testing_Utilities/tests --namespace=HTTPTestingUtilities\\\\tests
