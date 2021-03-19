@@ -3,9 +3,10 @@
 namespace lib\classes;
 
 use common\logging\Logger as Logger;
+use cli\classes\Readline;
 
 
-class PHPUnitTest {
+class PHPUnitTest extends Readline {
     private $testFiles = [];
     private $opts;
     private $testCounts = ['passing' => 0, 'failing' => 0];
@@ -40,7 +41,13 @@ class PHPUnitTest {
     public function run() : bool 
     {
         $allPassing = null;
-            
+        $spacing = $this->text(str_repeat(" ", 15), 0, 35, 44);
+        
+        echo $spacing;
+        echo $this->text("Begining Unit Test", 1, 32, 46);
+        echo $spacing;
+        echo "\n\n";
+        
         foreach ($this->testFiles as $file) {
             $className = sprintf(
                     '%s\%s', 
@@ -93,6 +100,17 @@ class PHPUnitTest {
                 }
             }
         }
+        
+        $spacing = $spacing = $this->text(str_repeat(" ", 5), 0, 35, 47);
+        echo "\n";
+        echo $this->text($spacing, 0, 35, 44);
+        $text = sprintf('Passing Tests %d', $this->testCounts['passing']);
+        echo $this->text($text, 0, 35, 46);
+        echo "\n";
+        echo $this->text($spacing, 0, 35, 44);
+        $text = sprintf('Failing Tests %d', $this->testCounts['failing']);
+        echo $this->text($text, 0, 35, 46);
+        echo "\n\n";
         
         return $allPassing ?? false;
     }
