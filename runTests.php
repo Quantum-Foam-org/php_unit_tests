@@ -44,7 +44,7 @@ if ($allPassing) {
     exit(Logger::obj()->write($log, 0, true, 0));
 } else {
     $log = sprintf(
-            'Tesst complete. Failed! Tests are NOT passing. Total Tests Passing: %d, Total Tests Failing: %d',
+            'Test complete. Failed! Tests are NOT passing. Total Tests Passing: %d, Total Tests Failing: %d',
             $phpUnitTest->testCounts['passing'],
             $phpUnitTest->testCounts['failing']
             );

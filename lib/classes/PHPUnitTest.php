@@ -64,13 +64,17 @@ class PHPUnitTest extends Readline {
                 if (!empty($methods)) {
                     $methods = \array_filter($methods, 
                             function($method) { 
-                                return strpos($method, 'Test'); 
+                                return strpos($method->getName(), 'test') === 0; 
                             } );
                 } else {
                     $log = sprintf('%s no test methods found', $className);
                         Logger::obj()->write($log,0, true);
                 }
 
+                if (method_exists($phpUnitTestObj, 'setUp')) {
+                    $phpUnitTestObj->setUp();
+                }
+                
                 foreach ($methods as  $method) {
                     $methodName = $method->getName();
                     if ($phpUnitTestObj->{$methodName}() === true) {
