@@ -10,8 +10,8 @@ require ($cli_autoload_file);
 
 require ('./lib/autoload.php');
 
-use lib\classes\PHPUnitTest;
-use lib\classes\validate;
+use PHPUnitTest\lib\classes\PHPUnitTest;
+use PHPUnitTest\lib\classes\validate;
 use common\logging\Logger;
 
 \common\Config::obj(__DIR__ . '/config/config.ini');

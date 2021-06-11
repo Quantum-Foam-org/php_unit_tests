@@ -1,6 +1,6 @@
 <?php
 
-namespace lib\classes\validate;
+namespace PHPUnitTest\lib\classes\validate;
 
 use cli\classes as cli;
 

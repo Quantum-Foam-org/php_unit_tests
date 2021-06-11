@@ -1,6 +1,6 @@
 <?php
 
-namespace lib\classes;
+namespace PHPUnitTest\lib\classes;
 
 use common\logging\Logger as Logger;
 use cli\classes\Readline;
