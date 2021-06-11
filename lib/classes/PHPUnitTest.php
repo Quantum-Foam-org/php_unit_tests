@@ -90,7 +90,7 @@ class PHPUnitTest extends Readline {
                             $allPassing = true;
                         }
                     } else {
-                        $log = sprintf('%d.) %s::%s failed', ++$this->testCounts['passing'], $className, $methodName);
+                        $log = sprintf('%d.) %s::%s failed', ++$this->testCounts['failing'], $className, $methodName);
                         Logger::obj()->write($log, 0,true);
                         
                         if ($allPassing === true) {
