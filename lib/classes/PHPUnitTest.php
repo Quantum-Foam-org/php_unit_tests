@@ -55,7 +55,12 @@ class PHPUnitTest extends Readline {
                     basename($file, '.php')
                     );
             
-            $phpUnitTestObj = new $className();
+            try {
+                $phpUnitTestObj = new $className();
+            } catch(\Error $e) {
+                Logger::obj()->writeException($e, -1, true); 
+                exit(4);
+            }
             
             if ($phpUnitTestObj instanceOf $className) {
                 $ref = new \ReflectionClass($className);
